@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#120d19">
+<meta name="description" content="MAGNAS AI - your personal voice assistant">
+<link rel="manifest" href="manifest.webmanifest">
+<title>MAGNAS AI</title>
+<style>
+:root{--bg:#120d19;--panel:#21172a;--pink:#ff4fa3;--pink2:#ff9bce;--txt:#fff7fc;--muted:#c5b4c6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#713052 0,#28172d 38%,var(--bg) 75%);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100dvh}
+.app{max-width:720px;min-height:100dvh;margin:auto;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);display:flex;flex-direction:column}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 2px}.brand{font-size:24px;font-weight:900;letter-spacing:1.5px}.brand span{color:var(--pink2)}.badge{font-size:11px;color:#ffc8e2;border:1px solid #804365;background:#351b30;padding:7px 10px;border-radius:30px}
+.hero{text-align:center;padding:18px 8px}.orb{width:124px;height:124px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,#ffe0ef,#ff67b1 38%,#8b286b 76%);box-shadow:0 0 30px #ff4fa366,0 0 75px #ff4fa333;position:relative}.orb:before,.orb:after{content:"";position:absolute;inset:-9px;border:1px solid #ff9bce88;border-radius:50%}.orb:after{inset:-17px;border-color:#ff9bce44}.spark{font-size:48px;text-shadow:0 3px 12px #8a1b55}
+h1{font-size:24px;margin:0 0 6px}.sub{color:var(--muted);font-size:14px;margin:0}
+.panel{background:#21172aeF;border:1px solid #68405e;border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 12px 32px #0003}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{font-size:12px;color:var(--muted);margin:0 0 7px}
+select,textarea{width:100%;background:#140f1b;color:var(--txt);border:1px solid #68405e;border-radius:12px;padding:12px;font:inherit;outline:none}select:focus,textarea:focus{border-color:var(--pink)}
+.chat{flex:1;min-height:170px;max-height:36dvh;overflow:auto}.bubble{max-width:90%;padding:11px 13px;border-radius:15px;margin:8px 0;white-space:pre-wrap;line-height:1.45;font-size:14px;overflow-wrap:anywhere}.bot{background:#38233a;border:1px solid #704064}.user{background:#74345e;border:1px solid #b9528a;margin-left:auto}
+.composer{display:flex;gap:8px;align-items:stretch}.composer textarea{min-height:48px;max-height:110px;resize:vertical}.send{min-width:54px;border:0;border-radius:13px;color:white;background:linear-gradient(135deg,#ff58a8,#bd287e);font-size:21px;font-weight:800}
+.mic{width:100%;padding:15px;border:0;border-radius:14px;background:linear-gradient(100deg,#ff58a8,#c32c83);color:white;font-weight:800;font-size:16px}.mic.active{animation:pulse 1s infinite;background:#9e286f}
+@keyframes pulse{50%{box-shadow:0 0 0 8px #ff4fa322}}.hint{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}.smallbtn{border:1px solid #76506d;background:#2b1b30;color:#ffd5e8;padding:9px 11px;border-radius:10px;font-size:12px}
+footer{text-align:center;color:#9b899c;font-size:11px;padding:13px 0 18px}
+</style>
+</head>
+<body><main class="app">
+<header><div class="brand">MAGNAS <span>AI</span></div><div class="badge">PERSONAL AI</div></header>
+<section class="hero"><div class="orb"><div class="spark">✦</div></div><h1>Hello! I'm MAGNAS.</h1><p class="sub">Tumhari smart AI dost — bolo ya type karo.</p></section>
+<section class="panel"><div class="grid">
+<div><p class="label">Voice</p><select id="voice"><option value="female">Female voice</option><option value="male">Male voice</option></select></div>
+<div><p class="label">Language</p><select id="language"><option value="hi-IN">Hindi</option><option value="mr-IN">Marathi</option><option value="en-IN">English</option></select></div>
+</div><p class="hint">Phone mein available voices ke hisaab se voice quality aur gender vary kar sakte hain.</p></section>
+<section class="panel chat" id="chat" aria-live="polite"><div class="bubble bot">Hi! Main MAGNAS hoon. Main tumhari kya help kar sakta hoon?</div></section>
+<section class="panel">
+<div class="composer"><textarea id="prompt" rows="1" placeholder="Yahan apna message likho…"></textarea><button class="send" id="send" aria-label="Send">➤</button></div>
+<div style="height:10px"></div><button class="mic" id="mic">🎙️ Bolo — tap to speak</button>
+<p class="hint" id="hint">Voice input ke liye microphone permission allow karo. Internet AI backend abhi connect karna baaki hai.</p>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:10px"><button class="smallbtn" id="repeat">Greeting suno</button><button class="smallbtn" id="clear">Chat clear</button></div>
+</section>
+<footer>MAGNAS AI • Early Android-ready prototype</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id), chat=$('chat');
+function add(text,role){const d=document.createElement('div');d.className='bubble '+role;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+const greeting='Hi! Main MAGNAS hoon. Main tumhari kya help kar sakta hoon?';
+function say(text){if(!('speechSynthesis'in window)){ $('hint').textContent='Is browser mein voice output supported nahi hai.';return}
+speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=$('language').value;
+const list=speechSynthesis.getVoices();const prefix=u.lang.slice(0,2).toLowerCase();const local=list.filter(v=>v.lang.toLowerCase().startsWith(prefix));const gender=$('voice').value;
+const chosen=local.find(v=>new RegExp(gender,'i').test(v.name))||local[gender==='female'?0:1]||local[0];if(chosen)u.voice=chosen;speechSynthesis.speak(u)}
+function send(){const value=$('prompt').value.trim();if(!value)return;add(value,'user');$('prompt').value='';add('MAGNAS ka secure AI brain abhi connect karna baaki hai. Is prototype mein voice aur interface test kar sakte ho. Agle step mein backend/API connect hoga.','bot')}
+$('send').onclick=send;$('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+$('repeat').onclick=()=>say(greeting);$('clear').onclick=()=>{chat.innerHTML='';add(greeting,'bot')};
+const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(Recognition){const rec=new Recognition();rec.interimResults=false;rec.maxAlternatives=1;rec.onstart=()=>{$('mic').classList.add('active');$('mic').textContent='Listening…'};rec.onresult=e=>{$('prompt').value=e.results[0][0].transcript;$('hint').textContent='Speech text mein aa gaya. Send dabao.'};rec.onerror=e=>$('hint').textContent='Mic error: '+e.error+'. Browser permission check karo.';rec.onend=()=>{$('mic').classList.remove('active');$('mic').textContent='🎙️ Bolo — tap to speak'};$('mic').onclick=()=>{rec.lang=$('language').value;try{rec.start()}catch(e){$('hint').textContent='Dobara try karne se pehle ek second rukho.'}}}else{$('mic').onclick=()=>$('hint').textContent='Speech recognition is not supported here. Android Chrome mein try karo.'}
+if('speechSynthesis'in window){speechSynthesis.onvoiceschanged=()=>{};window.addEventListener('load',()=>setTimeout(()=>say(greeting),900))}
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>
